@@ -9,6 +9,7 @@ from nltk.corpus import stopwords
 from sklearn.pipeline import make_pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 # from __future__ import print_function
 
 class Data: pass
@@ -73,7 +74,7 @@ class MyClassifier(object):
         print('Probabilities = ',c.predict_proba([mydata]),'\n')
         print(exp.as_list(),"\n")
 #         %matplotlib inline
-        fig = exp.as_pyplot_figure()
+        # fig = exp.as_pyplot_figure()
         exp.show_in_notebook(text=True)
     
 
@@ -153,14 +154,51 @@ class LogisticRegressionClassifier(MyClassifier):
         self.explain_sample(self.lr, -1, sample, num_of_features)
     
     def get_top_features(self, n = 10):
-        vec = abs(self.lr.coef_)
+        vec = abs(self.lr.coef_[0])
         tmp = []
         for i in range(len(vec)):
-            tmp.append([vec[i], self.lr.coef_[i], i])
+            tmp.append([vec[i], self.lr.coef_[0][i], i])
         tmp.sort(reverse = True)
         print("The top-%d important Feature Name & Importance Value: \n" % n)
         for i in range(n):
-            idx = tmp[i][1]
+            idx = tmp[i][2]
+            importance_value = tmp[i][1]
+            feature_name = self.feature[idx]
+            print("%20s : %f \n " %(feature_name, importance_value))
+
+class SVMClassifier(MyClassifier):
+    def __init__(self):
+        self.svm = SVC(gamma='auto')
+
+    # before calling this function, must call self.upload_train_file
+    def train_model(self):
+        self.svm.fit(self.train_x, self.train_y)
+
+    # before calling this function, must call self.upload_test_file
+    def predict_test(self):
+        pred = self.svm.predict(self.test_x)
+        print("The F1-score is: ")
+        print(sklearn.metrics.f1_score(self.test_y, pred, average='binary'))
+    
+    def predict_sample(self, sample):
+        pred = self.svm.predict([sample])
+        print("The lable of this sample is :" + str(self.data.target_labels[pred[0]]))
+    
+    def explain_indexed_test_sample(self, idx, num_of_features = 6):
+        self.explain_sample(self.svm, idx, None, num_of_features)
+    
+    def explain_self_input_sample(self, sample, num_of_features = 6):
+        self.explain_sample(self.svm, -1, sample, num_of_features)
+    
+    def get_top_features(self, n = 10):
+        vec = abs(self.svm.coef_)
+        tmp = []
+        for i in range(len(vec)):
+            tmp.append([vec[i], self.svm.coef_[i], i])
+        tmp.sort(reverse = True)
+        print("The top-%d important Feature Name & Importance Value: \n" % n)
+        for i in range(n):
+            idx = tmp[i][2]
             importance_value = tmp[i][1]
             feature_name = self.feature[idx]
             print("%20s : %f \n " %(feature_name, importance_value))
