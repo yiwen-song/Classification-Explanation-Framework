@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
   <meta charset="utf-8">
@@ -24,6 +23,15 @@
 </head>
 
 <body id="page-top">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+       <ul>
+          {% for message in messages %}
+          <li<{{ message }}</li>
+          {% endfor %}
+       </ul>
+    {% endif %}
+    {% endwith %}
 
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
@@ -92,6 +100,18 @@
             <form action="{{ url_for('upload_train') }}" method=post enctype=multipart/form-data>
               <input type=file name=file> <input type=submit value=Upload>
             </form>
+            <div class="container" style="min-height:100%;width:80%">
+                {% with messages = get_flashed_messages(category_filter=["miss_train_file"]) %}
+                  {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    {{message}}
+                    </div>
+                  {% endfor %}
+                  {% endif %}
+                {% endwith %}
+            </div>
           </center>
         </div>
       </div>
@@ -130,11 +150,36 @@
               <form action="{{ url_for('upload_test') }}" method=post enctype=multipart/form-data>
                 <input type=file name=file> <input type=submit value=Upload>
               </form>
+              <div class="container" style="min-height:100%;width:80%">
+                  {% with messages = get_flashed_messages(category_filter=["miss_test_file"]) %}
+                    {% if messages %}
+                      {% for message in messages %}
+                      <div class="alert alert-warning alert-dismissible" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                      {{message}}
+                      </div>
+                    {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+              </div>
               <br>
-              <a href = "/predict"><button type="button" class="btn btn-primary btn-rounded">Run Test!</button></a>
-              </center>
+              <a href = "/predict_global">
+              <button type="button" class="btn btn-primary btn-rounded">Run Test!</button>
+              </a>
+              <div id='response_global'></div>
+            </center>
               <!--Grid row-->
-              <div id="include_global_res"></div>
+              <!-- Grid row-->
+              <!-- <div class="row d-flex justify-content-center mt-5">
+
+                  <div class="col-md-10">
+          
+                    <canvas id="lineChart"></canvas>
+          
+                  </div>
+          
+              </div> -->
+              <!--Grid row -->
             </div>
         </div>
       </div>
@@ -145,20 +190,19 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-8 mx-auto">
-            <h2>Visualization</h2>
-            <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero odio fugiat voluptatem dolor, provident officiis, id iusto! Obcaecati incidunt, qui nihil beatae magnam et repudiandae ipsa exercitationem, in, quo totam.</p>
+            <h2>Local Explanation</h2>
+            <p class="lead">In this section, you can either random select a sentence from test set, or try your own sentence!</p>
             <div class="container">
-                <!--Grid row-->
-                <div class="row d-flex justify-content-center mt-5">
-          
-                  <div class="col-md-10">
-          
-                    <canvas id="lineChart"></canvas>
-          
+                <center>
+                <button id="random_one" type="button" class="btn btn-primary btn-rounded">Random one!</button>
+                <!-- Material input -->
+                <div class="form-group shadow-textarea">
+                  <h4>OR</h4>
+                    <textarea class="form-control z-depth-1" id="sentence" rows="3" placeholder="Your sentence here..."></textarea>
                   </div>
-          
-                </div>
-                <!--Grid row-->
+                <button id="your_sentence" type="button" class="btn btn-primary btn-rounded">Go!</button>
+                <div id='response_local'></div>
+                </center>
               </div>
           </div>
         </div>
@@ -175,7 +219,7 @@
 
   <!-- Bootstrap core JavaScript -->
   <!-- JQuery -->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <!-- Bootstrap tooltips -->
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
   <!-- Bootstrap core JavaScript -->
@@ -220,13 +264,59 @@
       }
     });
   </script>
-
-  <script> 
-    $(function(){
-      $("#include_global_res").load("/global_res"); 
-    });
-  </script> 
-
 </body>
+
+
+<script>
+       $("#predict_global").click(function(event){
+          var the_id = event.target.id;
+          $.ajax({
+             url: "/predict_global",
+             type: "get",
+            //  data: {button_id: the_id},
+            success: function(response) {
+            $("#response_global").html(response);
+          },
+           error: function(xhr_) {
+            alert("Please wait a moment!");
+         }
+        });
+      });
+   </script>
+
+<script>
+    $("#random_one").click(function(event){
+       var the_id = event.target.id;
+       $.ajax({
+          url: "/random_one",
+          type: "get",
+         //  data: {button_id: the_id},
+         success: function(response) {
+         $("#response_local").html(response);
+       },
+        error: function(xhr__) {
+      alert("Please wait a moment!");
+      }
+     });
+   });
+</script>
+
+
+<script>
+    $("#your_sentence").click(function(event){
+       var sentence = $('#sentence').val();
+       $.ajax({
+          url: "/your_sentence"+'/'+sentence,
+          type: "get",
+         //  data: {button_id: the_id},
+         success: function(response) {
+         $("#response_local").html(response);
+       },
+        error: function(xhr__) {
+      alert("Please wait a moment!");
+      }
+     });
+   });
+</script>
 
 </html>
