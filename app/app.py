@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory
+from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory, send_file
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = './tmp'
@@ -60,6 +60,13 @@ def upload_test():
 def welcome():
     print ("=================================predict=================================")
     return redirect("/#testglobal")
+
+
+@app.route('/global_res')
+def global_res():
+    print ("=================================predict=================================")
+    # return "111"
+    return send_file("./templates/global_res.html")
 
 
 @app.route('/model1')
