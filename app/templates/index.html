@@ -44,7 +44,7 @@
             <a class="nav-link js-scroll-trigger" href="#model">Model</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
+            <a class="nav-link js-scroll-trigger" href="#testglobal">Test</a>
           </li>
         </ul>
       </div>
@@ -88,9 +88,11 @@
             <li>Bootstrap's scrollspy feature which highlights which section of the page you're on in the navbar</li>
             <li>Minimal custom CSS so you are free to explore your own unique design options</li>
           </ul>
-          <form method=post enctype=multipart/form-data>
-            <input type=file name=file> <input type=submit value=Upload>
-          </form>
+          <center>
+            <form action="{{ url_for('upload_train') }}" method=post enctype=multipart/form-data>
+              <input type=file name=file> <input type=submit value=Upload>
+            </form>
+          </center>
         </div>
       </div>
     </div>
@@ -102,41 +104,66 @@
         <div class="col-lg-8 mx-auto">
           <h2>Select your model</h2>
           <p class="lead">Select a model here.</p>
-          <a href = "/model1"><button type="button" class="btn btn-primary btn-rounded">Model1</button></a>
-          <button type="button" class="btn btn-default btn-rounded">Modle2</button>
-          <button type="button" class="btn btn-secondary btn-rounded">Modle3</button>
-          <button type="button" class="btn btn-success btn-rounded">Model4</button>
-          <!-- <button type="button" class="btn btn-info btn-rounded">Info</button>
-          <button type="button" class="btn btn-warning btn-rounded">Warning</button>
-          <button type="button" class="btn btn-danger btn-rounded">Danger</button> -->
+          <center>
+              <a href = "/model1"><button type="button" class="btn btn-primary btn-rounded">Model1</button></a>
+              <button type="button" class="btn btn-default btn-rounded">Modle2</button>
+              <button type="button" class="btn btn-secondary btn-rounded">Modle3</button>
+              <button type="button" class="btn btn-success btn-rounded">Model4</button>
+              <!-- <button type="button" class="btn btn-info btn-rounded">Info</button>
+              <button type="button" class="btn btn-warning btn-rounded">Warning</button>
+              <button type="button" class="btn btn-danger btn-rounded">Danger</button> -->
+          </center>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="contact" class="bg-light">
+  <section id="testglobal" class="bg-light">
     <div class="container">
       <div class="row">
         <div class="col-lg-8 mx-auto">
-          <h2>Visualization</h2>
-          <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero odio fugiat voluptatem dolor, provident officiis, id iusto! Obcaecati incidunt, qui nihil beatae magnam et repudiandae ipsa exercitationem, in, quo totam.</p>
+          <h2>Global Explanation</h2>
+          <p class="lead">Upload your test file. You can also use default test files and Skip file uploding.</p>
           <div class="container">
               <!--Grid row-->
-              <div class="row d-flex justify-content-center mt-5">
-        
-                <div class="col-md-10">
-        
-                  <canvas id="lineChart"></canvas>
-        
-                </div>
-        
-              </div>
+              <center>
+              <form action="{{ url_for('upload_test') }}" method=post enctype=multipart/form-data>
+                <input type=file name=file> <input type=submit value=Upload>
+              </form>
+              <br>
+              <a href = "/predict"><button type="button" class="btn btn-primary btn-rounded">Run Test!</button></a>
+              </center>
               <!--Grid row-->
+              {% include 'global_res.html' ignore missing %}
             </div>
         </div>
       </div>
     </div>
   </section>
+
+  <section id="testlocal">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>Visualization</h2>
+            <p class="lead">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vero odio fugiat voluptatem dolor, provident officiis, id iusto! Obcaecati incidunt, qui nihil beatae magnam et repudiandae ipsa exercitationem, in, quo totam.</p>
+            <div class="container">
+                <!--Grid row-->
+                <div class="row d-flex justify-content-center mt-5">
+          
+                  <div class="col-md-10">
+          
+                    <canvas id="lineChart"></canvas>
+          
+                  </div>
+          
+                </div>
+                <!--Grid row-->
+              </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
   <!-- Footer -->
   <footer class="py-5 bg-dark">
