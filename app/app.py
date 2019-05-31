@@ -8,6 +8,10 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
+models = ["model1", "model2", "model3"]
+model_name = None
+
 @app.after_request
 def add_header(r):
     """
@@ -45,11 +49,23 @@ def upload_train():
     return render_template("index.html")
 
 
-@app.route('/model1')
-def model1():
-    print ("=================================model1=================================")
-    return redirect("/#model")
+@app.route('/model/<num>')
+def model_select(num):
+    num = int(num)
+    print ("=================================Model \"%d\"================================="%num)
+    model_name = models[num]
+    # TODO: select a model
+    return "<h3>Your select Model \"%s\" </h3>"%model_name
 
+
+@app.route('/train/<num>')
+def train(num):
+    num = int(num)
+    if num == -1:
+        return "<h3>Please select a model.</h3>"
+    print ("=================================Training \"%d\"================================="%num)
+    # TODO train the model and generate html emplanation
+    return "<h3>Training finished. </h3>"
 
 
 @app.route('/upload_test', methods=['GET', 'POST'])

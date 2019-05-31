@@ -125,13 +125,16 @@
           <h2>Select your model</h2>
           <p class="lead">Select a model here.</p>
           <center>
-              <a href = "/model1"><button type="button" class="btn btn-primary btn-rounded">Model1</button></a>
-              <button type="button" class="btn btn-default btn-rounded">Modle2</button>
-              <button type="button" class="btn btn-secondary btn-rounded">Modle3</button>
-              <button type="button" class="btn btn-success btn-rounded">Model4</button>
+              <button id = "model/0" type="button" class="btn btn-success btn-rounded">Model1</button>
+              <button id = "model/1" type="button" class="btn btn-default btn-rounded">Modle2</button>
+              <button id = "model/2" type="button" class="btn btn-secondary btn-rounded">Modle3</button>
+              <!-- <button type="button" class="btn btn-success btn-rounded">Model4</button> -->
               <!-- <button type="button" class="btn btn-info btn-rounded">Info</button>
               <button type="button" class="btn btn-warning btn-rounded">Warning</button>
               <button type="button" class="btn btn-danger btn-rounded">Danger</button> -->
+              <div id='response_model'></div>
+              <button id="train" type="button" class="btn btn-primary btn-rounded">Train!</button>
+              <div id = "train_response"></div>
           </center>
         </div>
       </div>
@@ -268,12 +271,44 @@
 
 
 <script>
+    var modelid=-1;
+    $("button[id^='model']").click(function(event){
+      modelid = event.target.id.split('/')[1];
+       $.ajax({
+          url: '/model/'+modelid,
+          type: "get",
+         success: function(response) {
+         $("#response_model").html(response);
+       },
+        error: function(xhr__) {
+      alert("Please wait a moment!");
+      }
+     });
+   });
+</script>
+
+
+<script>
+    $("#train").click(function(event){
+       $.ajax({
+          url: '/train/'+modelid,
+          type: "get",
+         success: function(response) {
+         $("#train_response").html(response);
+       },
+        error: function(xhr_) {
+         alert("Please wait a moment!");
+      }
+     });
+   });
+</script>
+
+
+<script>
        $("#predict_global").click(function(event){
-          var the_id = event.target.id;
           $.ajax({
              url: "/predict_global",
              type: "get",
-            //  data: {button_id: the_id},
             success: function(response) {
             $("#response_global").html(response);
           },
@@ -282,15 +317,13 @@
          }
         });
       });
-   </script>
+</script>
 
 <script>
     $("#random_one").click(function(event){
-       var the_id = event.target.id;
        $.ajax({
           url: "/random_one",
           type: "get",
-         //  data: {button_id: the_id},
          success: function(response) {
          $("#response_local").html(response);
        },
