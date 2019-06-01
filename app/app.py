@@ -2,15 +2,18 @@ import os
 from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory, send_file
 from werkzeug.utils import secure_filename
 from urllib.parse import unquote
+from classify import RandomForestClassifier, LogisticRegressionClassifier, SVMClassifier, MyClassifier
 UPLOAD_FOLDER = './tmp'
+models = ["Random Forest", "Logistic Regression", "SVM"]
+model_name = None
+model = None
+
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
-models = ["model1", "model2", "model3"]
-model_name = None
 
 @app.after_request
 def add_header(r):
@@ -54,7 +57,14 @@ def model_select(num):
     num = int(num)
     print ("=================================Model \"%d\"================================="%num)
     model_name = models[num]
-    # TODO: select a model
+    global model
+    if num == 0:
+        model = RandomForestClassifier()
+        print ("=================================random forest=================================")
+    elif num == 1:
+        model = LogisticRegressionClassifier()
+    else:
+        model = SVMClassifier()
     return "<h3>Your select Model \"%s\" </h3>"%model_name
 
 
@@ -64,7 +74,8 @@ def train(num):
     if num == -1:
         return "<h3>Please select a model.</h3>"
     print ("=================================Training \"%d\"================================="%num)
-    # TODO train the model and generate html emplanation
+    model.upload_train_file("./tmp/train.tsv")
+    model.train_model()
     return "<h3>Training finished. </h3>"
 
 
@@ -82,6 +93,7 @@ def upload_test():
         if file:
             filename = "test.tsv"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            model.upload_test_file(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect("/#testglobal")
     return render_template("index.html")
 
@@ -94,12 +106,25 @@ def predict():
 
 @app.route('/random_one')
 def predict_lcoal():
-    print ("=================================predict=================================")
+    print ("=================================predict random=================================")
+    len_of_test = len(model.data.test_labels)
+    import random
+    idx = random.randint(0,len_of_test)
+    model.explain_indexed_test_sample(idx)
+    return send_file("./tmp/local_res.html")
+
+
+@app.route('/your_idx/<idx>')
+def predict_index(idx):
+    idx = int(idx)
+    print ("=================================predict %d================================="%idx)
+    model.explain_indexed_test_sample(idx)
     return send_file("./tmp/local_res.html")
 
 @app.route('/your_sentence/<sentence>')
 def your_sentence(sentence):
     print ("=================================predict \"%s\"================================="%sentence)
+    model.explain_self_input_sample(sentence)
     return send_file("./tmp/local_res.html")
 
 

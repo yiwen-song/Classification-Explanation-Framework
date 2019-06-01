@@ -198,6 +198,14 @@
             <div class="container">
                 <center>
                 <button id="random_one" type="button" class="btn btn-primary btn-rounded">Random one!</button>
+                <!--Textarea with icon prefix-->
+                <h4>OR</h4>
+                <div class="md-form mb-4 pink-textarea active-pink-textarea">
+                  <i class="fas fa-angle-double-right prefix"></i>
+                  <textarea id="idx" class="md-textarea form-control" rows="3"></textarea>
+                  <label for="form21">Input an index of test sentence.</label>
+                </div>
+                <button id="your_idx" type="button" class="btn btn-primary btn-rounded">Go!</button>
                 <!-- Material input -->
                 <div class="form-group shadow-textarea">
                   <h4>OR</h4>
@@ -333,6 +341,25 @@
      });
    });
 </script>
+
+<script>
+  $("#your_idx").click(function(event){
+     var idx = $('#idx').val();
+     $.ajax({
+        url: "/your_idx"+'/'+idx,
+        type: "get",
+       //  data: {button_id: the_id},
+       success: function(response) {
+       $("#response_local").html(response);
+     },
+      error: function(xhr__) {
+    alert("Please wait a moment!");
+    }
+   });
+ });
+</script>
+
+
 
 
 <script>
