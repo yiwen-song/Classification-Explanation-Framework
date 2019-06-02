@@ -171,16 +171,14 @@ def predict_global_():
 
 @app.route('/predict_global_roc')
 def predict_global_roc():
-    # TODO: generate labels and data
-    labels = ["January", "February", "March", "April", "May", "June", "July"]
-    data = [1, 1, 1, 1, 1, 1, 1]
+    data_x, data_y, my_label = model.get_roc()
     resp  = {
             "type": 'line',
             "data": {
-              "labels": labels,
+              "labels": data_x,
               "datasets": [{
-                  "label": "ROC curve",
-                  "data": data,
+                  "label": my_label,
+                  "data": data_y,
                   "backgroundColor": [
                     'rgba(105, 0, 132, .2)',
                   ],
@@ -191,7 +189,7 @@ def predict_global_roc():
                 },
                 {
                   "label": "Y = X",
-                  "data": [i * 1.0 / (len(labels) - 1) for i in range(len(labels))],
+                  "data": [i * 1.0 / (len(data_x) - 1) for i in range(len(data_x))],
                   "backgroundColor": [
                     'rgba(0, 137, 132, .2)',
                   ],

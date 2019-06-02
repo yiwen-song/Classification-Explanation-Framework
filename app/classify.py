@@ -9,7 +9,7 @@ from nltk.corpus import stopwords
 from sklearn.pipeline import make_pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
+from sklearn.svm import LinearSVC
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -65,20 +65,21 @@ class MyClassifier(object):
         return self.vectorizer.transform(data)
 
     def train_model(self):
-        print ("here train")
-        pass
-    
-    def predict_sample(self, sample):
         pass
     
     def predict_test(self):
         pass
     
     def explain_self_input_sample(self, sample):
-        print ("here")
         pass
     
     def explain_indexed_test_sample(self, idx):
+        pass
+    
+    def get_top_features(self, n = 10):
+        pass
+
+    def get_roc(self):
         pass
 
 
@@ -99,49 +100,22 @@ class RandomForestClassifier(MyClassifier):
         print("The precision is: ", precision)
         print("The recall is: ", recall)
         print("The f1-score is: ", fscore)
-        n_classes = len(self.data.target_labels)
-        names = self.data.target_labels
         data = []
         data.append(precision)
         data.append(recall)
         data.append(fscore)
-        data = np.array(data).T
-        
-        # # print ("1111")
-        # # df = pd.DataFrame(data, index = names, columns=['Precision','Recall','F1-Score'])
-        # # print ("2222")
-        # the_table = plt.table(cellText=data, rowLabels=names, colLabels=['Precision','Recall','F1-Score'], colWidths = [0.3]*data.shape[1], loc='center',cellLoc='center')
-        # # print ("3333")
-        # the_table.set_fontsize(15)
-        # # print ("4444")
-        # plt.axis('off')
-        # print ("5555")
-        # the_table.scale(1.5,1.52)
-        # print ("6666")
-        # plt.savefig("./tmp/statics.png")
-
-        # y_score = self.rf.predict_proba(self.test_x)
-        # fpr, tpr, threshold = roc_curve(self.test_y, y_score[:,1]) 
-        # roc_auc = auc(fpr,tpr)
-        # plt.figure()
-        # lw = 2
-        # plt.figure(figsize=(8,8))
-        # plt.plot(fpr, tpr, color='darkorange',
-        #         lw=lw, label='ROC curve (area = %0.2f)' % roc_auc) 
-        # plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
-        # plt.xlim([0.0, 1.0])
-        # plt.ylim([0.0, 1.05])
-        # plt.xlabel('False Positive Rate')
-        # plt.ylabel('True Positive Rate')
-        # plt.title('Receiver operating characteristic example')
-        # plt.legend(loc="lower right")
-        # plt.savefig("./tmp/roc.png")
+        data = np.array(data).T  
         return self.data.target_labels, data
 
-
-    def predict_sample(self, sample):
-        pred = self.rf.predict([sample])
-        print("The lable of this sample is :" + str(self.data.target_labels[pred[0]]))
+    def get_roc(self):
+        y_score = self.rf.predict_proba(self.test_x)
+        fpr, tpr, threshold = roc_curve(self.test_y, y_score[:,1]) 
+        roc_auc = auc(fpr,tpr)
+        fpr = np.around(fpr, decimals = 4)
+        tpr = np.around(tpr, decimals = 4)
+        print("roc_auc:",roc_auc)
+        label = 'ROC Curve (Area = %0.3f)' % roc_auc
+        return list(fpr), list(tpr), label
     
     def explain_indexed_test_sample(self, idx, num_of_features = 6, savefile='./tmp/local_res.html'):
         c = make_pipeline(self.vectorizer, self.rf)
@@ -153,12 +127,9 @@ class RandomForestClassifier(MyClassifier):
         print('Probabilities = ',c.predict_proba([mydata]),'\n')
         print(exp.as_list(),"\n")
         exp.save_to_file(savefile)
-
     
     def explain_self_input_sample(self, sample, num_of_features = 6, savefile='./tmp/local_res.html'):
-        print ("11111111111111111")
         c = make_pipeline(self.vectorizer, self.rf)
-        print ("2222222222222222")
         mydata = sample
         exp = self.explainer.explain_instance(mydata, c.predict_proba, num_features = num_of_features)
         print('Predicted Class: %s' % self.data.target_labels[np.argmax(c.predict_proba([mydata]))])
@@ -195,15 +166,29 @@ class LogisticRegressionClassifier(MyClassifier):
         print ("train LogisticRegressionClassifier")
         self.lr.fit(self.train_x, self.train_y)
 
-    # before calling this function, must call self.upload_test_file
     def predict_test(self):
-        pred = self.lr.predict(self.test_x)
-        print("The F1-score is: ")
-        print(sklearn.metrics.f1_score(self.test_y, pred, average='binary'))
-    
-    def predict_sample(self, sample):
-        pred = self.lr.predict([sample])
-        print("The lable of this sample is :" + str(self.data.target_labels[pred[0]]))
+        y_pred = self.lr.predict(self.test_x)
+        precision, recall, fscore, support = sklearn.metrics.precision_recall_fscore_support(\
+            self.test_y, y_pred, average = None, labels = [0,1])
+        print("The precision is: ", precision)
+        print("The recall is: ", recall)
+        print("The f1-score is: ", fscore)
+        data = []
+        data.append(precision)
+        data.append(recall)
+        data.append(fscore)
+        data = np.array(data).T  
+        return self.data.target_labels, data
+
+    def get_roc(self):
+        y_score = self.lr.predict_proba(self.test_x)
+        fpr, tpr, threshold = roc_curve(self.test_y, y_score[:,1]) 
+        roc_auc = auc(fpr,tpr)
+        fpr = np.around(fpr, decimals = 4)
+        tpr = np.around(tpr, decimals = 4)
+        print("roc_auc:",roc_auc)
+        label = 'ROC Curve (Area = %0.3f)' % roc_auc
+        return list(fpr), list(tpr), label
     
     def explain_indexed_test_sample(self, idx, num_of_features = 6, savefile='./tmp/local_res.html'):
         c = make_pipeline(self.vectorizer, self.lr)
@@ -215,7 +200,6 @@ class LogisticRegressionClassifier(MyClassifier):
         print('Probabilities = ',c.predict_proba([mydata]),'\n')
         print(exp.as_list(),"\n")
         exp.save_to_file(savefile)
-
     
     def explain_self_input_sample(self, sample, num_of_features = 6, savefile='./tmp/local_res.html'):
         c = make_pipeline(self.vectorizer, self.lr)
@@ -233,63 +217,96 @@ class LogisticRegressionClassifier(MyClassifier):
             tmp.append([vec[i], self.lr.coef_[0][i], i])
         tmp.sort(reverse = True)
         print("The top-%d important Feature Name & Importance Value: \n" % n)
+        datas = []
+        labels = []
         for i in range(n):
             idx = tmp[i][2]
             importance_value = tmp[i][1]
             feature_name = self.feature[idx]
+            datas.append(importance_value)
+            labels.append(feature_name)
             print("%20s : %f \n " %(feature_name, importance_value))
+        return datas,labels
 
 class SVMClassifier(MyClassifier):
     def __init__(self):
-        self.svm = SVC(gamma='auto')
+        self.svm = LinearSVC(random_state=0, tol=1e-5)
 
     # before calling this function, must call self.upload_train_file
     def train_model(self):
         self.svm.fit(self.train_x, self.train_y)
 
-    # before calling this function, must call self.upload_test_file
     def predict_test(self):
-        pred = self.svm.predict(self.test_x)
-        print("The F1-score is: ")
-        print(sklearn.metrics.f1_score(self.test_y, pred, average='binary'))
+        y_pred = self.svm.predict(self.test_x)
+        precision, recall, fscore, support = sklearn.metrics.precision_recall_fscore_support(\
+            self.test_y, y_pred, average = None, labels = [0,1])
+        print("The precision is: ", precision)
+        print("The recall is: ", recall)
+        print("The f1-score is: ", fscore)
+        data = []
+        data.append(precision)
+        data.append(recall)
+        data.append(fscore)
+        data = np.array(data).T  
+        return self.data.target_labels, data
     
-    def predict_sample(self, sample):
-        pred = self.svm.predict([sample])
-        print("The lable of this sample is :" + str(self.data.target_labels[pred[0]]))
+    def get_roc(self):
+        y_score = self.svm.decision_function(self.test_x)
+        fpr, tpr, threshold = roc_curve(self.test_y, y_score) 
+        roc_auc = auc(fpr,tpr)
+        fpr = np.around(fpr, decimals = 4)
+        tpr = np.around(tpr, decimals = 4)
+        print("roc_auc:",roc_auc)
+        label = 'ROC Curve (Area = %0.3f)' % roc_auc
+        return list(fpr), list(tpr), label
     
+    def predict_probs(self,datas):
+        res = []
+        for data in datas:
+            prob = self.svm.decision_function([data])[0]
+            if(self.svm.decision_function([data])[0] == 0):
+                res.append([prob,max(0,1-prob)])
+            else:
+                res.append([max(1-prob,0),prob])
+        return np.array(res)
+
     def explain_indexed_test_sample(self, idx, num_of_features = 6, savefile='./tmp/local_res.html'):
         c = make_pipeline(self.vectorizer, self.svm)
         mydata = self.data.test_data[idx]
-        exp = self.explainer.explain_instance(mydata, c.predict_proba, num_features = num_of_features)
+        exp = self.explainer.explain_instance(mydata, self.predict_probs, num_features = num_of_features)
         print('Sample id: %d' % idx)
         print('True class: %s' % self.data.target_labels[self.test_y[idx]])
-        print('Predicted Class: %s' % self.data.target_labels[np.argmax(c.predict_proba([mydata]))])
-        print('Probabilities = ',c.predict_proba([mydata]),'\n')
+        print('Predicted Class: %s' % self.data.target_labels[c.predict([mydata])[0]])
+        print('Probabilities = ',c.decision_function([mydata]),'\n')
         print(exp.as_list(),"\n")
         exp.save_to_file(savefile)
-
     
     def explain_self_input_sample(self, sample, num_of_features = 6, savefile='./tmp/local_res.html'):
         c = make_pipeline(self.vectorizer, self.svm)
         mydata = sample
-        exp = self.explainer.explain_instance(mydata, c.predict_proba, num_features = num_of_features)
-        print('Predicted Class: %s' % self.data.target_labels[np.argmax(c.predict_proba([mydata]))])
-        print('Probabilities = ',c.predict_proba([mydata]),'\n')
+        exp = self.explainer.explain_instance(mydata, self.predict_probs, num_features = num_of_features)
+        print('Predicted Class: %s' % self.data.target_labels[c.predict([mydata])[0]])
+        print('Probabilities = ',c.decision_function([mydata]),'\n')
         print(exp.as_list(),"\n")
         exp.save_to_file(savefile)
     
     def get_top_features(self, n = 10):
-        vec = abs(self.svm.coef_)
+        vec = abs(self.svm.coef_[0])
         tmp = []
         for i in range(len(vec)):
-            tmp.append([vec[i], self.svm.coef_[i], i])
+            tmp.append([vec[i], self.svm.coef_[0][i], i])
         tmp.sort(reverse = True)
         print("The top-%d important Feature Name & Importance Value: \n" % n)
+        datas = []
+        labels = []
         for i in range(n):
             idx = tmp[i][2]
             importance_value = tmp[i][1]
             feature_name = self.feature[idx]
+            datas.append(importance_value)
+            labels.append(feature_name)
             print("%20s : %f \n " %(feature_name, importance_value))
+        return datas,labels
 
 
 if __name__ == "__main__":
