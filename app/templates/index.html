@@ -7,7 +7,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Scrolling Nav - Start Bootstrap Template</title>
+  <title>256 demo</title>
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
   
@@ -19,6 +19,9 @@
 
   <!-- Custom styles for this template -->
   <link href="{{ url_for('static', filename='css/scrolling-nav.css') }}" rel="stylesheet">
+
+  
+
 
 </head>
 
@@ -125,9 +128,9 @@
           <h2>Select your model</h2>
           <p class="lead">Select a model here.</p>
           <center>
-              <button id = "model/0" type="button" class="btn btn-success btn-rounded">Model1</button>
-              <button id = "model/1" type="button" class="btn btn-default btn-rounded">Modle2</button>
-              <button id = "model/2" type="button" class="btn btn-secondary btn-rounded">Modle3</button>
+              <button id = "model/0" type="button" class="btn btn-success btn-rounded">Random Forest</button>
+              <button id = "model/1" type="button" class="btn btn-default btn-rounded">Logistic Regression</button>
+              <button id = "model/2" type="button" class="btn btn-secondary btn-rounded">SVM</button>
               <!-- <button type="button" class="btn btn-success btn-rounded">Model4</button> -->
               <!-- <button type="button" class="btn btn-info btn-rounded">Info</button>
               <button type="button" class="btn btn-warning btn-rounded">Warning</button>
@@ -166,10 +169,43 @@
                   {% endwith %}
               </div>
               <br>
-              <a href = "/predict_global">
-              <button type="button" class="btn btn-primary btn-rounded">Run Test!</button>
-              </a>
-              <div id='response_global'></div>
+              <!-- <a href = "/predict_global"> -->
+              <button id = "predict_global" type="button" class="btn btn-primary btn-rounded">Run Test!</button>
+              <!-- </a> -->
+              <!-- Classic tabs -->
+                <div class="classic-tabs mx-2">
+
+                  <ul class="nav tabs-cyan" id="myClassicTabShadow" role="tablist">
+                    <li class="nav-item">
+                      <a class="nav-link  waves-light active show" id="profile-tab-classic-shadow" data-toggle="tab" href="#profile-classic-shadow"
+                        role="tab" aria-controls="profile-classic-shadow" aria-selected="true">Metrics Table</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link waves-light" id="follow-tab-classic-shadow" data-toggle="tab" href="#follow-classic-shadow"
+                        role="tab" aria-controls="follow-classic-shadow" aria-selected="false">Top Features</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link waves-light" id="contact-tab-classic-shadow" data-toggle="tab" href="#contact-classic-shadow"
+                        role="tab" aria-controls="contact-classic-shadow" aria-selected="false">ROC</a>
+                    </li>
+                  </ul>
+
+                  <div class="tab-content card" id="myClassicTabContentShadow">
+                    <div class="tab-pane fade active show" id="profile-classic-shadow" role="tabpanel" aria-labelledby="profile-tab-classic-shadow">
+                      <div id='response_global'></div> 
+                      <!-- <img id="response_global" src=""></img> -->
+                    </div>
+                    <div class="tab-pane fade" id="follow-classic-shadow" role="tabpanel" aria-labelledby="follow-tab-classic-shadow">
+                      <canvas id="chart"></canvas>
+                    </div>
+                    <div class="tab-pane fade" id="contact-classic-shadow" role="tabpanel" aria-labelledby="contact-tab-classic-shadow">
+                        <canvas id="roc"></canvas>
+                    </div>
+                  </div>
+
+                </div>
+              <!-- Classic tabs -->
+              <!-- <canvas id="horizontalBar"></canvas> -->
             </center>
               <!--Grid row-->
               <!-- Grid row-->
@@ -198,17 +234,18 @@
             <div class="container">
                 <center>
                 <button id="random_one" type="button" class="btn btn-primary btn-rounded">Random one!</button>
-                <!--Textarea with icon prefix-->
+                <br>
                 <h4>OR</h4>
-                <div class="md-form mb-4 pink-textarea active-pink-textarea">
-                  <i class="fas fa-angle-double-right prefix"></i>
-                  <textarea id="idx" class="md-textarea form-control" rows="3"></textarea>
-                  <label for="form21">Input an index of test sentence.</label>
+                <!--Material textarea-->
+                <div class="md-form">
+                    <textarea id="idx" class="md-textarea form-control" rows="1"></textarea>
+                    <label for="form7">Input an index of test sentences.</label>
                 </div>
                 <button id="your_idx" type="button" class="btn btn-primary btn-rounded">Go!</button>
+                <br>
+                <h4>OR</h4>
                 <!-- Material input -->
                 <div class="form-group shadow-textarea">
-                  <h4>OR</h4>
                     <textarea class="form-control z-depth-1" id="sentence" rows="3" placeholder="Your sentence here..."></textarea>
                   </div>
                 <button id="your_sentence" type="button" class="btn btn-primary btn-rounded">Go!</button>
@@ -246,35 +283,9 @@
 
   <!-- Custom JavaScript for this theme -->
   <script src="{{ url_for('static', filename='js/scrolling-nav.js') }}"></script>
-  
-  
-  
-  <script type="text/javascript">
-    var ctxL = document.getElementById("lineChart").getContext('2d');
-    var gradientFill = ctxL.createLinearGradient(0, 0, 0, 290);
-    gradientFill.addColorStop(0, "rgba(173, 53, 186, 1)");
-    gradientFill.addColorStop(1, "rgba(173, 53, 186, 0.1)");
-    var myLineChart = new Chart(ctxL, {
-      type: 'line',
-      data: {
-        labels: ["January", "February", "March", "April", "May", "June", "July"],
-        datasets: [{
-          label: "My First dataset",
-          data: [0, 65, 45, 65, 35, 65, 0],
-          backgroundColor: gradientFill,
-          borderColor: [
-            '#AD35BA',
-          ],
-          borderWidth: 2,
-          pointBorderColor: "#fff",
-          pointBackgroundColor: "rgba(173, 53, 186, 0.1)",
-        }]
-      },
-      options: {
-        responsive: true
-      }
-    });
-  </script>
+
+  <!-- <tabulor> -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Dynatable/0.3.1/jquery.dynatable.js"></script>
 </body>
 
 
@@ -288,7 +299,7 @@
          success: function(response) {
          $("#response_model").html(response);
        },
-        error: function(xhr__) {
+        error: function(xhr) {
       alert("Please wait a moment!");
       }
      });
@@ -304,12 +315,13 @@
          success: function(response) {
          $("#train_response").html(response);
        },
-        error: function(xhr_) {
+        error: function(xhr) {
          alert("Please wait a moment!");
       }
      });
    });
 </script>
+
 
 
 <script>
@@ -318,13 +330,48 @@
              url: "/predict_global",
              type: "get",
             success: function(response) {
-            $("#response_global").html(response);
+            new Chart(document.getElementById("chart"), JSON.parse(response));
           },
-           error: function(xhr_) {
-            alert("Please wait a moment!");
+           error: function(xhr) {
+            // $("#horizontalBar").html()
+            // alert("Please wait a moment!");
          }
         });
       });
+</script>
+
+<script>
+    $("#predict_global").click(function(event){
+       $.ajax({
+          url: "/predict_global_static",
+          type: "get",
+         success: function(response) {
+           $('#response_global').html(response);
+       },
+        error: function(xhr) {
+         // $("#horizontalBar").html()
+         // alert("Please wait a moment!");
+      }
+     });
+   });
+</script>
+
+
+<script>
+    $("#predict_global").click(function(event){
+       $.ajax({
+          url: "/predict_global_roc",
+          type: "get",
+         success: function(response) {
+          var ctxL = document.getElementById("roc").getContext('2d');
+          var myLineChart = new Chart(ctxL, JSON.parse(response));
+       },
+        error: function(xhr) {
+         // $("#horizontalBar").html()
+         // alert("Please wait a moment!");
+      }
+     });
+   });
 </script>
 
 <script>
@@ -335,7 +382,7 @@
          success: function(response) {
          $("#response_local").html(response);
        },
-        error: function(xhr__) {
+        error: function(xhr) {
       alert("Please wait a moment!");
       }
      });
@@ -352,7 +399,7 @@
        success: function(response) {
        $("#response_local").html(response);
      },
-      error: function(xhr__) {
+      error: function(xhr) {
     alert("Please wait a moment!");
     }
    });
@@ -372,7 +419,7 @@
          success: function(response) {
          $("#response_local").html(response);
        },
-        error: function(xhr__) {
+        error: function(xhr) {
       alert("Please wait a moment!");
       }
      });

@@ -1,7 +1,8 @@
 import os
-from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory, send_file
+from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory, send_file, jsonify
 from werkzeug.utils import secure_filename
 from urllib.parse import unquote
+import json
 from classify import RandomForestClassifier, LogisticRegressionClassifier, SVMClassifier, MyClassifier
 UPLOAD_FOLDER = './tmp'
 models = ["Random Forest", "Logistic Regression", "SVM"]
@@ -99,9 +100,110 @@ def upload_test():
 
 
 @app.route('/predict_global')
-def predict():
-    print ("=================================predict=================================")
-    return send_file("./tmp/global_res.html")
+def predict_global():
+    print ("=================================predict global=================================")
+    groundcolorsrc = ["rgba(255, 99, 132, 0.2)", "rgba(255, 159, 64, 0.2)",
+                      "rgba(255, 205, 86, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(54, 162, 235, 0.2)",
+                      "rgba(153, 102, 255, 0.2)", "rgba(201, 203, 207, 0.2)"]
+    bordercolorsrc = ["rgb(255, 99, 132)", "rgb(255, 159, 64)", "rgb(255, 205, 86)",
+                      "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"]
+    datas,labels = model.get_top_features()
+    print (datas, labels)
+    model.predict_test()
+    # labels = ["Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Grey", "again"]
+    # datas = [22, 33, -55, 12, 86, -23, 14, 100]
+    backgroundColor = [groundcolorsrc[i % 7] for i in range(len(labels))]
+    borderColor = [bordercolorsrc[i % 7] for i in range(len(labels))]
+    resp =  {
+                "type": "horizontalBar",
+                "data": {
+                  "labels": labels,
+                  "datasets": [{
+                    "label": "Top features",
+                    "data": datas,
+                    "backgroundColor": backgroundColor,
+                    "borderColor": borderColor,
+                    "borderWidth": 1
+                  }]
+                },
+                "options": {
+                    "scales": {
+                        "xAxes": [{
+                        "ticks": {
+                            "beginAtZero": True
+                        }
+                        }]
+                    }
+                }
+              }
+    return json.dumps(resp)
+
+
+@app.route('/predict_global_static')
+def predict_global_():
+    labels, data = model.predict_test()
+    resp = "<table class=\"table\">\
+                <thead>\
+                    <tr>\
+                    <th scope=\"col\">Label</th>\
+                    <th scope=\"col\">Precision</th>\
+                    <th scope=\"col\">Recall</th>\
+                    <th scope=\"col\">F1 Score</th>\
+                    </tr>\
+                </thead>\
+                <tbody>\
+                    <tr>\
+                    <th scope=\"row\">%s</th>\
+                    <td>%.4f</td>\
+                    <td>%.4f</td>\
+                    <td>%.4f</td>\
+                    </tr>\
+                    <tr>\
+                    <th scope=\"row\">%s</th>\
+                    <td>%.4f</td>\
+                    <td>%.4f</td>\
+                    <td>%.4f</td>\
+                    </tr>\
+                </tbody>\
+                </table>"%(labels[0], data[0][0], data[0][1], data[0][2],labels[1], data[1][0], data[1][1], data[1][2])
+    return resp
+
+
+@app.route('/predict_global_roc')
+def predict_global_roc():
+    # TODO: generate labels and data
+    labels = ["January", "February", "March", "April", "May", "June", "July"]
+    data = [1, 1, 1, 1, 1, 1, 1]
+    resp  = {
+            "type": 'line',
+            "data": {
+              "labels": labels,
+              "datasets": [{
+                  "label": "ROC curve",
+                  "data": data,
+                  "backgroundColor": [
+                    'rgba(105, 0, 132, .2)',
+                  ],
+                  "borderColor": [
+                    'rgba(200, 99, 132, .7)',
+                  ],
+                  "borderWidth": 2
+                },
+                {
+                  "label": "Y = X",
+                  "data": [i * 1.0 / (len(labels) - 1) for i in range(len(labels))],
+                  "backgroundColor": [
+                    'rgba(0, 137, 132, .2)',
+                  ],
+                  "borderColor": [
+                    'rgba(0, 10, 130, .7)',
+                  ],
+                  "borderWidth": 2
+                }
+              ]
+            }
+          }
+    return json.dumps(resp)
 
 
 @app.route('/random_one')

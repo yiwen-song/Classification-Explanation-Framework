@@ -37088,25 +37088,25 @@
 /***/ })
 /******/ ]);
 //# sourceMappingURL=bundle.js.map </script></head><body>
-        <div class="lime top_div" id="top_div5G9QVJ069EVJ5SK"></div>
+        <div class="lime top_div" id="top_div8ZD14NE9KZBIHWM"></div>
         
         <script>
-        var top_div = d3.select('#top_div5G9QVJ069EVJ5SK').classed('lime top_div', true);
+        var top_div = d3.select('#top_div8ZD14NE9KZBIHWM').classed('lime top_div', true);
         
             var pp_div = top_div.append('div')
                                 .classed('lime predict_proba', true);
             var pp_svg = pp_div.append('svg').style('width', '100%');
-            var pp = new lime.PredictProba(pp_svg, ["NEGATIVE", "POSITIVE"], [0.3, 0.7]);
+            var pp = new lime.PredictProba(pp_svg, ["NEGATIVE", "POSITIVE"], [0.8, 0.2]);
             
         
         var exp_div;
             var exp = new lime.Explanation(["NEGATIVE", "POSITIVE"]);
         
                 exp_div = top_div.append('div').classed('lime explanation', true);
-                exp.show([["Beautiful", 0.27218310656666356], ["much", 0.2717476980202539], ["surprise", 0.09964585634218935], ["to", 0.0038604462842342707], ["above", 0.0018336470314121887], ["villa", -0.001449790017708548]], 1, exp_div);
+                exp.show([["excited", -0.26372159195766587], ["finally", 0.0966716289460334], ["line", -0.060328180415163114], ["Santa", 0.0490193591389608], ["long", 0.03579871293261405], ["wait", 0.028224729419255957]], 1, exp_div);
                 
         var raw_div = top_div.append('div');
-            exp.show_raw_text([["Beautiful", 0, 0.27218310656666356], ["much", 37, 0.2717476980202539], ["surprise", 22, 0.09964585634218935], ["to", 16, 0.0038604462842342707], ["above", 42, 0.0018336470314121887], ["villa", 10, -0.001449790017708548]], 1, "Beautiful villa to my surprise. Very much above my Holiday Inn expectations!", raw_div, true);
+            exp.show_raw_text([["excited", 118, -0.26372159195766587], ["finally", 5, 0.0966716289460334], ["line", 90, -0.060328180415163114], ["Santa", 58, 0.0490193591389608], ["long", 85, 0.03579871293261405], ["wait", 75, 0.028224729419255957]], 1, "They finally opened a DD in Cali but I refuse to drive to Santa Monica and wait in a long line to try the coffee. Was excited to get a", raw_div, true);
             
         </script>
         </body></html>

@@ -10,6 +10,9 @@ from sklearn.pipeline import make_pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
+from sklearn.metrics import roc_curve, auc
+import matplotlib.pyplot as plt
+import pandas as pd
 # from __future__ import print_function
 
 class Data: pass
@@ -90,9 +93,51 @@ class RandomForestClassifier(MyClassifier):
 
     # before calling this function, must call self.upload_test_file
     def predict_test(self):
-        pred = self.rf.predict(self.test_x)
-        print("The F1-score is: ")
-        print(sklearn.metrics.f1_score(self.test_y, pred, average='binary'))
+        y_pred = self.rf.predict(self.test_x)
+        precision, recall, fscore, support = sklearn.metrics.precision_recall_fscore_support(\
+            self.test_y, y_pred, average = None, labels = [0,1])
+        print("The precision is: ", precision)
+        print("The recall is: ", recall)
+        print("The f1-score is: ", fscore)
+        n_classes = len(self.data.target_labels)
+        names = self.data.target_labels
+        data = []
+        data.append(precision)
+        data.append(recall)
+        data.append(fscore)
+        data = np.array(data).T
+        
+        # # print ("1111")
+        # # df = pd.DataFrame(data, index = names, columns=['Precision','Recall','F1-Score'])
+        # # print ("2222")
+        # the_table = plt.table(cellText=data, rowLabels=names, colLabels=['Precision','Recall','F1-Score'], colWidths = [0.3]*data.shape[1], loc='center',cellLoc='center')
+        # # print ("3333")
+        # the_table.set_fontsize(15)
+        # # print ("4444")
+        # plt.axis('off')
+        # print ("5555")
+        # the_table.scale(1.5,1.52)
+        # print ("6666")
+        # plt.savefig("./tmp/statics.png")
+
+        # y_score = self.rf.predict_proba(self.test_x)
+        # fpr, tpr, threshold = roc_curve(self.test_y, y_score[:,1]) 
+        # roc_auc = auc(fpr,tpr)
+        # plt.figure()
+        # lw = 2
+        # plt.figure(figsize=(8,8))
+        # plt.plot(fpr, tpr, color='darkorange',
+        #         lw=lw, label='ROC curve (area = %0.2f)' % roc_auc) 
+        # plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+        # plt.xlim([0.0, 1.0])
+        # plt.ylim([0.0, 1.05])
+        # plt.xlabel('False Positive Rate')
+        # plt.ylabel('True Positive Rate')
+        # plt.title('Receiver operating characteristic example')
+        # plt.legend(loc="lower right")
+        # plt.savefig("./tmp/roc.png")
+        return self.data.target_labels, data
+
 
     def predict_sample(self, sample):
         pred = self.rf.predict([sample])
@@ -123,16 +168,22 @@ class RandomForestClassifier(MyClassifier):
     
     def get_top_features(self, n = 10):
         vec = self.rf.feature_importances_
+        print(vec)
         tmp = []
         for i in range(len(vec)):
-            tmp.append([vec[i], i])
+            tmp.append([abs(vec[i]),i,vec[i]])
         tmp.sort(reverse = True)
         print("The top-%d important Feature Name & Importance Value: \n" % n)
+        datas = []
+        labels = []
         for i in range(n):
             idx = tmp[i][1]
-            importance_value = tmp[i][0]
+            importance_value = tmp[i][2]
             feature_name = self.feature[idx]
-            print("%20s : %f \n " %(feature_name, importance_value))
+            datas.append(importance_value)
+            labels.append(feature_name)
+            # print("%20s : %f \n " %(feature_name, importance_value))
+        return datas, labels
 
 
 class LogisticRegressionClassifier(MyClassifier):
