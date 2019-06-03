@@ -185,7 +185,7 @@ def predict_global_roc():
                   "borderColor": [
                     'rgba(200, 99, 132, .7)',
                   ],
-                  "borderWidth": 2
+                  "borderWidth": 0.2
                 },
                 {
                   "label": "Y = X",
@@ -196,7 +196,7 @@ def predict_global_roc():
                   "borderColor": [
                     'rgba(0, 10, 130, .7)',
                   ],
-                  "borderWidth": 2
+                  "borderWidth": 0.2
                 }
               ]
             }
