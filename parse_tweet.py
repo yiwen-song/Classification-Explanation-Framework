@@ -60,11 +60,11 @@ csvFile.close()
 n = len(gender)
 print("we have %d data in total.\n"%n)
 
-# data = []
-data = text
+data = []
+# data = text
 label = gender
-# for i in range(n):
-#     data.append(description[i] + ' ' + text[i])
+for i in range(n):
+    data.append(description[i] + ' ' + text[i])
 
 # print(data[0])
 X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.33, random_state=42)
