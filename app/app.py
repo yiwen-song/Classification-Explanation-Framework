@@ -7,7 +7,7 @@ from classify import RandomForestClassifier, LogisticRegressionClassifier, SVMCl
 UPLOAD_FOLDER = './tmp'
 models = ["Random Forest", "Logistic Regression", "SVM"]
 model_name = None
-model = None
+model = MyClassifier()
 
 
 app = Flask(__name__)
@@ -49,6 +49,8 @@ def upload_train():
         if file:
             filename = "train.tsv"
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            model.upload_train_file("./tmp/train.tsv")
+            model.show_word_cloud()
             return redirect("/#model")
     return render_template("index.html")
 

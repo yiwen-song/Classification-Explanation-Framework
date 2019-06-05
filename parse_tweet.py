@@ -7,7 +7,7 @@ csvFile = open("gender-classifier-DFE-791531.csv", "r",encoding='utf-8',errors='
 reader = csv.reader(csvFile)
 
 def remove_url(s):
-    url_reg = r'https://[a-zA-Z0-9.?/&=:]*'
+    url_reg = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     s = re.sub(url_reg, '', s)
     return s
 
@@ -50,11 +50,11 @@ for item in reader:
     if ((item[5] == 'female') or (item[5] == 'male')):
         confidence = float(item[6])
         if confidence >= 0.9: 
-            gender.append(item[5])
+            gender.append(item[5].strip())
             # description.append(item[10].replace('\n',''))
             # text.append(item[19].replace('\n',''))
-            description.append(cleaning(item[10]))
-            text.append(cleaning(item[19]))
+            description.append(cleaning(item[10]).strip())
+            text.append(cleaning(item[19]).strip())
 csvFile.close()
 
 n = len(gender)
@@ -67,7 +67,7 @@ for i in range(n):
     data.append(description[i] + ' ' + text[i])
 
 # print(data[0])
-X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.33, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.2, random_state=42)
 n_train = len(X_train)
 n_test = len(X_test)
 f1 = open("train-tweeter.tsv","w")

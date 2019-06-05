@@ -13,6 +13,7 @@ from sklearn.svm import LinearSVC
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 import pandas as pd
+from wordcloud import WordCloud
 # from __future__ import print_function
 
 class Data: pass
@@ -49,6 +50,7 @@ class MyClassifier(object):
         self.data.le.fit(self.data.train_labels)
         self.data.target_labels = self.data.le.classes_
         self.train_y = self.data.le.transform(self.data.train_labels)
+        self.n_classes = len(self.data.target_labels)
         
         self.explainer = LimeTextExplainer(class_names = self.data.target_labels)
 
@@ -81,6 +83,19 @@ class MyClassifier(object):
 
     def get_roc(self):
         pass
+    
+    def show_word_cloud(self):
+        mystring = []
+        for k in range(self.n_classes):
+            mystring.append("")
+        for i in range(len(self.data.train_data)):
+            sent = self.data.train_data[i]
+            idx = self.train_y[i]
+            mystring[idx] += sent
+        for k in range(self.n_classes):
+            filename = "./tmp/wordcloud_"+str(k) + '.png'
+            wordcloud = WordCloud().generate(mystring[k])
+            wordcloud.to_file(filename)
 
 
 class RandomForestClassifier(MyClassifier):
