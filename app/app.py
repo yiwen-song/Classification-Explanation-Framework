@@ -4,16 +4,17 @@ from werkzeug.utils import secure_filename
 from urllib.parse import unquote
 import json
 from classify import RandomForestClassifier, LogisticRegressionClassifier, SVMClassifier, MyClassifier
+import shutil
 UPLOAD_FOLDER = './tmp'
 models = ["Random Forest", "Logistic Regression", "SVM"]
 model_name = None
 model = MyClassifier()
 
-
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
+
 
 
 @app.after_request
@@ -31,7 +32,7 @@ def add_header(r):
 
 
 @app.route('/')
-def upload_file():
+def indexhtml():
     return render_template("index.html")
 
 
@@ -51,8 +52,17 @@ def upload_train():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             model.upload_train_file("./tmp/train.tsv")
             model.show_word_cloud()
-            return redirect("/#model")
+            return redirect("/#data")
     return render_template("index.html")
+
+
+@app.route('/cloud/<id>')
+def cloudimg(id):
+    if os.path.exists('./tmp/wordcloud_%s.png'%id):
+      return send_file('./tmp/wordcloud_%s.png'%id)
+    else:
+      return ""
+
 
 
 @app.route('/model/<num>')
@@ -236,7 +246,8 @@ def your_sentence(sentence):
 #     return send_from_directory(app.config['UPLOAD_FOLDER'],
 #                                filename)
 
-if __name__ == '__main__':
-    app.debug = True
-    app.run()
+# if __name__ == '__main__':
+#     import shutil
+#     shutil.rmtree('./tmp')
+#     app.run()
     
