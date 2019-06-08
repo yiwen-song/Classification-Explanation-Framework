@@ -4,7 +4,7 @@
 
 
 
-# <center>text Classification Demo</center>
+# <center>Text Classification Demo</center>
 
   <center>
     <br>
