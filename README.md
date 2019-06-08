@@ -49,11 +49,11 @@ In this project, we've developed a pipeline for text classification. The steps t
 
 
 
-![part1-1](./0-1-0.png)
+![part1-1](./images/0-1-0.png)
 
-![part1-1-1](./0-1-1.png)
+![part1-1-1](./images/0-1-1.png)
 
-![part-1-1-2](./0-1-2.png)
+![part-1-1-2](./images/0-1-2.png)
 
 
 
@@ -63,13 +63,13 @@ In this project, we've developed a pipeline for text classification. The steps t
 
 #### 1.1  My favirote review
 
-![1-1-0](./1-1-0.png)
+![1-1-0](./images/1-1-0.png)
 
 #### 1.2  Over-Confident Review
 
 - [ ] This sentence should be negative, but is classified as positive with confidence 0.93:
 
-![1-1-1](./1-1-1.png)
+![1-1-1](./images/1-1-1.png)
 
 
 
@@ -88,11 +88,11 @@ In this part, we use the data set download from https://www.kaggle.com/crowdflow
 
 Here are the <u>global</u> predict results on our test set:
 
-![2-0](./2-0.png)
+![2-0](./images/2-0.png)
 
-![2-1](./2-1.png)
+![2-1](./images/2-1.png)
 
-![2-2](./2-2.png)
+![2-2](./images/2-2.png)
 
 
 
@@ -102,13 +102,13 @@ Here are two samples of our <u>local explanation</u>:
 
 1. The first one is a sample that is classified as male:
 
-![2-2-0](./2-2-0.png)
+![2-2-0](./images/2-2-0.png)
 
 
 
 2. The second one is a sample that is classified as female:
 
-![2-2-1](./2-2-1.png)
+![2-2-1](./images/2-2-1.png)
 
 
 
