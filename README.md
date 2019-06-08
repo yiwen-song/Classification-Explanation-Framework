@@ -4,7 +4,7 @@
 
 
 
-# <center>CSE 256 Demo Report</center>
+# <center>text Classification Demo</center>
 
   <center>
     <br>
