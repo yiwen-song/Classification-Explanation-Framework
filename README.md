@@ -114,7 +114,7 @@ Here are two samples of our <u>local explanation</u>:
 
 ## Part 3
 
-#### 3.2  The creative points are as follows: 
+#### 3.1  The creative points are as follows: 
 
 * We use a unified pipeline to do **part1** and **part2**, which means, this text classification system can not only be applied to the sentiment review classification and gender classsification, but also can be applied to all the binary classification tasks. 
 
@@ -124,7 +124,7 @@ Here are two samples of our <u>local explanation</u>:
 
   
 
-#### 3.1  Tech stack
+#### 3.2  Tech stack
 
 * **Flask** is used for backend and **Bootstrap** is used for frontend.
 * **Jquery** is used for dynamically rendering the html.
